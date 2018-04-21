@@ -5,34 +5,24 @@ const path = require('path');
 const request = require('request');
 const requestProgress = require('request-progress');
 
-let serverUrl;
-let serverName;
-let serverLocation;
+let serverInfo = {};
 
 function promptServerInfo() {
-  return inquirer.prompt([
-    {
-      type: 'input',
-      name: 'serverUrl',
-      message: 'Server URL:'
-    },
-    {
-      type: 'input',
-      name: 'serverName',
-      message: 'Server name:',
-      default: 'server'
-    },
-    {
-      type: 'input',
-      name: 'serverLocation',
-      message: 'Server location:',
-      default: __dirname
-    }
-  ]).then(answers => {
-    serverUrl = answers.serverUrl;
-    serverName = answers.serverName;
-    serverLocation = answers.serverLocation;
-  });
+  return inquirer.prompt([{
+    type: 'input',
+    name: 'url',
+    message: 'Server URL:'
+  }, {
+    type: 'input',
+    name: 'name',
+    message: 'Server name:',
+    default: 'server'
+  }, {
+    type: 'input',
+    name: 'destination',
+    message: 'Server destination:',
+    default: __dirname
+  }]).then(answers => Object.assign(serverInfo, answers));
 }
 
 function download(url, destination, fileName) {
@@ -56,5 +46,5 @@ function unzip(zipPath, destination, folderName) {
 }
 
 promptServerInfo()
-  .then(() => download(serverUrl, serverLocation, 'server.zip'))
-  .then(() => unzip(path.join(serverLocation, 'server.zip'), serverLocation, serverName));
+  .then(() => download(serverInfo.url, serverInfo.destination, 'server.zip'))
+  .then(() => unzip(path.join(serverInfo.destination, 'server.zip'), serverInfo.destination, serverInfo.name));
