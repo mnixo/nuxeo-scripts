@@ -1,0 +1,11 @@
+{
+  "name": "nuxeo-scripts",
+  "version": "0.0.1",
+  "description": "Nuxeo scripts in Node.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mnixo/nuxeo-scripts.git"
+  },
+  "author": "mnixo",
+  "license": "MIT"
+}
