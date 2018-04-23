@@ -9,6 +9,8 @@
   "author": "mnixo",
   "license": "MIT",
   "dependencies": {
+    "bytes": "^3.0.0",
+    "cli-progress": "^1.8.0",
     "decompress": "^4.2.0",
     "inquirer": "^5.2.0",
     "request": "^2.85.0",

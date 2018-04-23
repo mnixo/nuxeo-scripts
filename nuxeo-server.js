@@ -1,5 +1,7 @@
-const fs = require('fs');
+const bytes = require('bytes');
+const cliProgress = require('cli-progress');
 const decompress = require('decompress');
+const fs = require('fs');
 const inquirer = require('inquirer');
 const path = require('path');
 const request = require('request');
@@ -27,13 +29,24 @@ function promptServerInfo() {
 
 function download(url, destination, fileName) {
   return new Promise((resolve, reject) => {
+    const progressBar = new cliProgress.Bar({
+      barsize: process.stdout.columns - 30,
+      fps: 20,
+      format: `[{bar}] {percentage}% ({speed})`,
+      clearOnComplete: true,
+      hideCursor: true
+    });
+    progressBar.start(1, 0, { speed: 'N/A' });
     requestProgress(request(url), {
-      throttle: 500,
+      throttle: 50,
     }).on('progress', function (state) {
-      console.log(state.percent);
+      progressBar.update(state.percent, { speed: state.speed ? `${bytes(state.speed)}/s` : 'N/A' });
     }).on('error', function (error) {
+      progressBar.stop();
       reject(error);
     }).on('end', function () {
+      progressBar.update(1);
+      progressBar.stop();
       resolve();
     }).pipe(fs.createWriteStream(path.join(destination, fileName)));
   });
