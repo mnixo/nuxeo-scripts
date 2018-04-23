@@ -39,12 +39,15 @@ function download(url, destination, fileName) {
   });
 }
 
-function unzip(zipPath, destination, folderName) {
-  return decompress(zipPath, path.join(destination, folderName), {
-    strip: 1
-  });
+function unzip(zipPath, destination, folderName, strip) {
+  return decompress(zipPath, path.join(destination, folderName), { strip });
+}
+
+function remove(targetPath) {
+  return new Promise((resolve, reject) => fs.unlink(targetPath, error => error ? reject() : resolve()));
 }
 
 promptServerInfo()
   .then(() => download(serverInfo.url, serverInfo.destination, 'server.zip'))
-  .then(() => unzip(path.join(serverInfo.destination, 'server.zip'), serverInfo.destination, serverInfo.name));
+  .then(() => unzip(path.join(serverInfo.destination, 'server.zip'), serverInfo.destination, serverInfo.name, 1))
+  .then(() => remove(path.join(serverInfo.destination, 'server.zip')));
