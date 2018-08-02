@@ -60,7 +60,12 @@ function remove(targetPath) {
   return new Promise((resolve, reject) => fs.unlink(targetPath, error => error ? reject() : resolve()));
 }
 
+function makeExecutable(targetPath) {
+  return new Promise((resolve, reject) => fs.chmod(targetPath, 0o777, error => error ? reject() : resolve()))
+}
+
 promptServerInfo()
   .then(() => download(serverInfo.url, serverInfo.destination, 'server.zip'))
   .then(() => unzip(path.join(serverInfo.destination, 'server.zip'), serverInfo.destination, serverInfo.name, 1))
-  .then(() => remove(path.join(serverInfo.destination, 'server.zip')));
+  .then(() => remove(path.join(serverInfo.destination, 'server.zip')))
+  .then(() => makeExecutable(path.join(serverInfo.destination, serverInfo.name, 'bin', 'nuxeoctl')));
